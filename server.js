@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const dns = require('dns');
 
 const { Schema } = mongoose;
 const app = express();
@@ -15,9 +14,9 @@ mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology
 const urlSchema = {
   originalUrl: String,
   shortUrl: String
-}
+};
 
-const Url = mongoose.model("Url", urlSchema);
+const Url = mongoose.model('Url', urlSchema);
 
 function createAndSaveUrl(val, done) {
   const url = new Url({
@@ -57,17 +56,16 @@ app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
 
-app.post("/api/shorturl/new", (req, res) => {
+app.post('/api/shorturl/new', (req, res) => {
   const url = req.body.url;
-  if (!/https|http/.test(url)) res.json({error: "invalid url"});
-  else   
-    createAndSaveUrl(url, (what, data) => {
-      res.json({ original_url: data.originalUrl,  short_url:  data.shortUrl });
-    });
   
+  if (!/https|http/.test(url)) res.json({error: 'invalid url'});
+  else createAndSaveUrl(url, (what, data) => {
+    res.json({ original_url: data.originalUrl,  short_url:  data.shortUrl });
+  });  
 });
 
-app.get("/api/shorturl/:short", (req, res) => {
+app.get('/api/shorturl/:short', (req, res) => {
   findByShortUrl(req.params.short, (what, original) => {
     res.redirect(original);
   });
